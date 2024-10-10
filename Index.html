@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DPGHFN5WBB"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-DPGHFN5WBB');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Buddy - Dynamic m3u8 Video Player</title>
+
+    <!-- Plyr CSS for proper styling of video controls -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.8/dist/plyr.css">
+    
+    <style>
+        /* Container for centering the video player */
+        .video-container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        /* Title styling */
+        .title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        /* Telegram button styling */
+        .telegram-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 20px;
+            background-color: #0088cc;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        /* Dark mode toggle button */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        /* Keyboard Shortcuts */
+        .keyboard-shortcuts {
+            display: none;
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+
+        /* Watermark styling */
+        .watermark {
+            position: absolute;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Dark mode styling */
+        .dark-mode {
+            background-color: #1e1e1e;
+            color: #ffffff;
+        }
+
+        .dark-mode .video-container {
+            background-color: #333;
+        }
+
+        .dark-mode .telegram-btn {
+            background-color: #005f8d;
+        }
+
+        .dark-mode-toggle.dark {
+            background-color: #ddd;
+            color: #333;
+        }
+
+        .container {
+            margin: 100px auto;
+            width: 70%;
+        }
+        video {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">Study Buddy</div>
+
+    <!-- Dark Mode Toggle Button -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()">Dark Mode</button>
+
+    <!-- Keyboard Shortcuts Help -->
+    <div class="keyboard-shortcuts">
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+            <li><strong>Space</strong> - Play/Pause</li>
+            <li><strong>F</strong> - Fullscreen</li>
+            <li><strong>Arrow Left/Right</strong> - Rewind/Forward</li>
+        </ul>
+        <button onclick="toggleShortcuts()">Close</button>
+    </div>
+
+    <!-- Main Video Container -->
+    <div class="video-container">
+        <div class="container">
+            <video id="player" controls crossorigin playsinline poster="https://i.ibb.co/jgj2Jy8/Untitled-design-3.png"></video>
+        </div>
+        <div class="watermark" style="left: 10px; top: 10px;">Powered by Study Buddy</div>
+    </div>
+
+    <!-- Join Telegram Button -->
+    <a href="https://t.me/SB_BKUP" class="telegram-btn">Join Telegram</a>
+
+    <!-- Plyr JS and Hls.js -->
+    <script src="https://cdn.rawgit.com/video-dev/hls.js/18bb552/dist/hls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.8/dist/plyr.polyfilled.min.js"></script>
+
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+           e.preventDefault();
+        });
+        document.onkeydown = function(e) {
+           if(e.keyCode == 123) {
+              return false;
+           }
+           if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
+              return false;
+           }
+           if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) {
+              return false;
+           }
+           if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
+              return false;
+           }
+           if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
+              return false;
+           }
+        }
+        var _0x25f4=["\x68\x65\x6C\x6C\x6F","\x67\x72\x65\x65\x74\x69\x6E\x67"];alert(_0x25f4[1])
+  
+        </script>
+
+    <script>
+        // Function to get query parameter from URL
+        function getQueryParam(param) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Base URL for the video stream (for video IDs)
+        var baseUrl = 'https://madxabhi-pw-78ab681aba3f.herokuapp.com/pw/';
+        var defaultVideoUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8'; // Your default URL
+
+        // Get the video URL or video ID from query parameter '?video='
+        var videoParam = getQueryParam('video');
+
+        // Function to check if the string is a valid .m3u8 URL
+        function isM3U8Url(url) {
+            return url && url.endsWith('MM');
+        }
+
+        // Check if the videoParam is a direct URL or a video ID
+        var videoUrl;
+        if (isM3U8Url(videoParam)) {
+            // If the param is a valid .m3u8 URL, use it directly
+            videoUrl = videoParam;
+        } else if (videoParam) {
+            // If the param is not a direct URL, assume it's a video ID and construct the full video URL
+            videoUrl = `${baseUrl}${videoParam}/master.m3u8&token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3Mjg4MTI0ODUuMTkzLCJkYXRhIjp7Il9pZCI6IjYzZmIwMTk3Mjc5MjVhMDAxOGVhYTkyOSIsInVzZXJuYW1lIjoiNjAwNTE2MTk2MyIsImZpcnN0TmFtZSI6IkF5dXNocmFqIiwibGFzdE5hbWUiOiJTSU5HSCIsIm9yZ2FuaXphdGlvbiI6eyJfaWQiOiI1ZWIzOTNlZTk1ZmFiNzQ2OGE3OWQxODkiLCJ3ZWJzaXRlIjoicGh5c2ljc3dhbGxhaC5jb20iLCJuYW1lIjoiUGh5c2ljc3dhbGxhaCJ9LCJlbWFpbCI6InJzODY1NzIyN0BnbWFpbC5jb20iLCJyb2xlcyI6WyI1YjI3YmQ5NjU4NDJmOTUwYTc3OGM2ZWYiLCI1YjI3YmQ5NjU4NDJmOTUwYTc3OGM2ZWYiXSwiY291bnRyeUdyb3VwIjoiSU4iLCJ0eXBlIjoiVVNFUiJ9LCJpYXQiOjE3MjgyMDc2ODV9.NtJH-XXT0n3LAlT_TRfr5x1JVyPMTSlfe-LlFtGAqMM`;
+        } else {
+            // If no video param is provided, use the default video URL
+            videoUrl = defaultVideoUrl;
+        }
+
+        // Setup Plyr player
+        const player = new Plyr('#player', {
+            controls: ['play', 'progress', 'current-time', 'mute', 'fullscreen']
+        });
+
+        // HLS.js integration
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(videoUrl);
+            hls.attachMedia(player.media);
+            player.play();
+        } else if (player.media.canPlayType('application/vnd.apple.mpegurl')) {
+            player.media.src = videoUrl;
+            player.media.addEventListener('loadedmetadata', function () {
+                player.play();
+            });
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const toggleButton = document.querySelector('.dark-mode-toggle');
+            toggleButton.classList.toggle('dark');
+            toggleButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+        }
+
+        // Show keyboard shortcuts
+        function toggleShortcuts() {
+            const shortcuts = document.querySelector('.keyboard-shortcuts');
+            shortcuts.style.display = shortcuts.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Function to move the watermark randomly within the video container
+        function moveWatermark() {
+            const watermark = document.querySelector('.watermark');
+            const videoPlayer = document.querySelector('video');
+
+            if (videoPlayer) {
+                const playerWidth = videoPlayer.offsetWidth;
+                const playerHeight = videoPlayer.offsetHeight;
+
+                // Generate random positions within the video player
+                const randomX = Math.random() * (playerWidth - 100);
+                const randomY = Math.random() * (playerHeight - 20);
+
+                // Apply the new position to the watermark
+                watermark.style.left = `${randomX}px`;
+                watermark.style.top = `${randomY}px`;
+            }
+        }
+
+        // Start moving the watermark every 3 seconds
+        setInterval(moveWatermark, 3000);
+    </script>
+</body>
+</html>
